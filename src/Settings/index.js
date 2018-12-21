@@ -8,6 +8,6 @@ import Page from "../Shared/Page";
 
 export default () => (
   <Page name="settings">
-    <WelcomeMessage /> <ConfirmButton /> <CoinGrid />
+        <WelcomeMessage /> <CoinGrid topSection /> <ConfirmButton /> <CoinGrid />
   </Page>
 );
