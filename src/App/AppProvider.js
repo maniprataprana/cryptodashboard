@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-
+import _ from "lodash";
 const cc = require("cryptocompare");
 
+const MAX_FAVORITES = 10;
 export const AppContext = React.createContext();
 
 export class AppProvider extends Component {
@@ -9,23 +10,42 @@ export class AppProvider extends Component {
     super(props);
     this.state = {
       page: "dashboard",
+      favorites: ["BTC", "ETH", "XMR", "DOGE"],
       ...this.savedSettings(),
       setPage: this.setPage,
+      addCoin: this.addCoin,
+      removeCoin: this.removeCoin,
+      isInFavorites: this.isInFavorites,
       confirmFavorites: this.confirmFavorites
     };
   }
 
   componentDidMount = () => {
-      this.fetchCoins();
-  }
+    this.fetchCoins();
+  };
 
-    fetchCoins = async() => {
-        let coinList = (await cc.coinList()).Data;
-        this.setState({coinList});
-        console.log(coinList);
-    };
+  removeCoin = key => {
+    let favorites = [...this.state.favorites];
+    this.setState({ favorites: _.pull(favorites, key) });
+  };
 
-    setPage = page => this.setState({ page });
+  addCoin = key => {
+    let favorites = [...this.state.favorites];
+    if (favorites.length < MAX_FAVORITES) {
+      favorites.push(key);
+      this.setState({ favorites });
+    }
+  };
+
+  isInFavorites = key => _.includes(this.state.favorites, key);
+
+  fetchCoins = async () => {
+    let coinList = (await cc.coinList()).Data;
+    this.setState({ coinList });
+    console.log(coinList);
+  };
+
+  setPage = page => this.setState({ page });
 
   savedSettings = () => {
     let data = JSON.parse(localStorage.getItem("cryptoDash"));
@@ -35,21 +55,25 @@ export class AppProvider extends Component {
         firstVisit: true
       };
     }
+
+    let { favorites } = data;
     return {
-      page: data.page,
-      firstVisit: false
+      favorites
     };
   };
 
   confirmFavorites = () => {
     this.setState({
-        firstVisit: false,
-        page: "dashboard"
+      firstVisit: false,
+      page: "dashboard"
     });
 
-      localStorage.setItem("cryptoDash", JSON.stringify({
-          test: "hello"
-      }));
+    localStorage.setItem(
+      "cryptoDash",
+      JSON.stringify({
+        favorites: this.state.favorites
+      })
+    );
   };
 
   render() {
