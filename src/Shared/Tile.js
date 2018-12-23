@@ -8,8 +8,9 @@ import {
 } from "../Shared/Styles";
 
 export const Tile = styled.div`
-  ${subtleBoxShadow} ${lightBlueBackground}
-  padding: 10px;
+    ${subtleBoxShadow};
+    ${lightBlueBackground};
+    padding: 10px;
 `;
 
 export const SelectableTile = styled(Tile)`
