@@ -12,6 +12,7 @@ export class AppProvider extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      timeInterval: "months",
       page: "dashboard",
       favorites: ["BTC", "ETH", "XMR", "DOGE"],
       ...this.savedSettings(),
@@ -21,7 +22,8 @@ export class AppProvider extends Component {
       isInFavorites: this.isInFavorites,
       setFilteredCoins: this.setFilteredCoins,
       confirmFavorites: this.confirmFavorites,
-      setCurrentFavorite: this.setCurrentFavorite
+      setCurrentFavorite: this.setCurrentFavorite,
+      changeChartSelect: this.changeChartSelect
     };
   }
 
@@ -29,6 +31,13 @@ export class AppProvider extends Component {
     this.fetchCoins();
     this.fetchPrices();
     this.fetchHistoricalData();
+  };
+
+  changeChartSelect = value => {
+    this.setState(
+      { timeInterval: value, historical: null },
+      this.fetchHistoricalData
+    );
   };
 
   fetchHistoricalData = async () => {
@@ -42,7 +51,7 @@ export class AppProvider extends Component {
         data: results.map((ticker, index) => [
           moment()
             .subtract({
-              months: TIME_UNITS - index
+              [this.state.timeInterval]: TIME_UNITS - index
             })
             .valueOf(),
           ticker.USD
@@ -62,7 +71,7 @@ export class AppProvider extends Component {
           ["USD"],
           moment()
             .subtract({
-              months: units
+              [this.state.timeInterval]: units
             })
             .toDate()
         )

@@ -16,7 +16,7 @@ const PriceGrid = () => (
     {({ prices }) => (
       <PriceGridStyled>
         {prices.map((price, index) => (
-          <PriceTile price={price} key={index} index={index}/>
+          <PriceTile price={price} key={`priceTile-${index}`} index={index} />
         ))}
       </PriceGridStyled>
     )}
